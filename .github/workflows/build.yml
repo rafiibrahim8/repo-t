@@ -1,0 +1,25 @@
+name: Check for outdated packages
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  check-for-outdated-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+    
+      - name: Install Python and pip
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+        
+      - name: Download package database
+        run: |
+          curl -Lso package.db ${{ secrets.PACKAGE_DB_URL }}
+      
+      
+
+      

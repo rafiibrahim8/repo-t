@@ -1,0 +1,4 @@
+.gnupg
+.env
+copy.sh
+__pycache__/
