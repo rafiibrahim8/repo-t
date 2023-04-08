@@ -34,7 +34,7 @@ jobs:
           echo ${{secrets.SSH_KNOWN_HOSTS}} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-          pip install -r src/requirements.txt
+          pip install -r requirements.txt
 
           cat <<EOF >> ~/gpg_privatekey.asc
           ${{secrets.GPG_PRIVATE_KEY}}
