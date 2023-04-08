@@ -3,6 +3,9 @@ name: Check for outdated packages
 on:
   schedule:
     - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
 
 jobs:
   check-for-outdated-packages:
@@ -16,10 +19,21 @@ jobs:
         with:
           python-version: 3.9
         
-      - name: Download package database
+      - name: Install ubuntu dependencies
         run: |
-          curl -Lso package.db ${{ secrets.PACKAGE_DB_URL }}
+          sudo apt update
+          sudo apt install -y sshfs secure-delete
       
-      
+      - name: Prepare the machine
+      - run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          cat <<EOF >> ~/.ssh/id_ed25519
+          ${{secrets.SSH_PRIVATE_KEY}}
+          EOF
+          chmod 600 ~/.ssh/id_ed25519
+          echo ${{secrets.SSH_KNOWN_HOSTS}} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
-      
+          mkdir -p ~/repo
+          sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:/${{secrets.SSH_REMOTE_PATH}} ~/repo
+          ls -la ~/repo
