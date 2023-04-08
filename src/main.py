@@ -35,4 +35,7 @@ def main():
     _main_impl(parser.parse_args())
 
 if __name__ == '__main__':
-    main()
+    import docker
+    client = docker.from_env()
+    x = client.containers.run("ubuntu", "echo hello world")
+    print(x)
