@@ -94,7 +94,23 @@ class DBMaker:
         self.__skip_md5 = kwargs.get('skip_md5', False)
         self.__temp_dir = get_temp_dir()
         self.__skip = skip
-    
+
+    @staticmethod
+    def make_tar(src_dir, dest_file):
+        temp_file = os.path.join(get_temp_dir(), 'temp.tar')
+
+        call_list = [
+            'bsdtar',
+            '--uid', '0',
+            '--gid', '0',
+            '-czf',
+            temp_file
+        ]
+        files = os.listdir(src_dir)
+        call_list.extend(files)
+        subprocess.check_call(call_list, cwd=src_dir)
+        shutil.move(temp_file, dest_file)
+
     def make_db(self):
         logger.info('Making repo database...')
         db = []
@@ -119,18 +135,6 @@ class DBMaker:
             with open(os.path.join(files_db, pkg.pkgname + '-' + pkg.pkgver, 'files'), 'w') as f:
                 f.write(pkg.get_pkg_files())
         
-        call_list = [
-            'bsdtar',
-            '--uid', '0',
-            '--gid', '0',
-            '-czf',
-            os.path.join(self.__repo_dir, f'{self.__repo_name}.db'),
-            '-C',
-            pkg_db,
-            '.'
-        ]
-        subprocess.check_call(call_list)
-        call_list[-4] = os.path.join(self.__repo_dir, f'{self.__repo_name}.files')
-        call_list[-2] = files_db
-        subprocess.check_call(call_list)
+        self.make_tar(pkg_db, os.path.join(self.__repo_dir, f'{self.__repo_name}.db'))
+        self.make_tar(files_db, os.path.join(self.__repo_dir, f'{self.__repo_name}.files'))
         shutil.rmtree(self.__temp_dir)

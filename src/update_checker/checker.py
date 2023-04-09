@@ -62,7 +62,7 @@ class UpdateChecker:
 
         update_available = []
         for package in packages:
-            git_checker = GitUpdateChecker(package.get('git_url'), package.get('pkgbuild-url'))
+            git_checker = GitUpdateChecker(package.get('git-url'), package.get('pkgbuild-url'))
             if self.__local_repo.get_version(package['name']) != git_checker.get_version(package['name']):
                 update_available.append(package)
                 continue

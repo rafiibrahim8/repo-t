@@ -4,6 +4,7 @@ import os
 
 from utils import logger, get_temp_dir
 from update_checker import RepoUpdateChecker
+from dbmaker import DBMaker
 
 class Merger:
     def __init__(self, new_db_path, old_db_path):
@@ -80,22 +81,9 @@ class Merger:
         logger.info('Making new database')
         new_db_file_path = os.path.join(self.__temp_dir, os.path.basename(self.__new_db_path))
         new_files_file_path = os.path.join(self.__temp_dir, os.path.basename(self.__new_db_path)[: -3] + '.files')
-
-        call_list = [
-            'bsdtar',
-            '--uid', '0',
-            '--gid', '0',
-            '-czf',
-            new_db_file_path,
-            '-C',
-            self.__db_dir,
-            '.'
-        ]
-        subprocess.check_call(call_list)
-        logger.info('Making new files')
-        call_list[-2] = self.__files_dir
-        call_list[-4] = new_files_file_path
-        subprocess.check_call(call_list)
+        
+        DBMaker.make_tar(self.__db_dir, new_db_file_path)
+        DBMaker.make_tar(self.__files_dir, new_files_file_path)
 
         logger.info('Moving new database and files')
         shutil.move(new_db_file_path, self.__new_db_path)

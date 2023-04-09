@@ -44,5 +44,5 @@ class Builder:
         builder.build()
     
     def __build_git(self, package):
-        builder = GitBuilder(self.__packager_name, self.__packager_email, self.__repo_dir, package['git_url'])
+        builder = GitBuilder(self.__packager_name, self.__packager_email, self.__repo_dir, package['git-url'])
         builder.build()

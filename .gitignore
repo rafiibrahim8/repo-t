@@ -1,4 +1,5 @@
 .gnupg
 .env
-copy.sh
+.venv
+secret/
 __pycache__/

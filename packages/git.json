@@ -1,1 +1,7 @@
-[]
+[
+    {
+        "name": "ibus-avro-git",
+        "git-url": "https://github.com/linux-gems/ibus-avro-git.git",
+        "pkgbuild-url": "https://github.com/linux-gems/ibus-avro-git/raw/main/PKGBUILD"
+    }
+]
