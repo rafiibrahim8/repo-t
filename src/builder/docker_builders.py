@@ -49,7 +49,7 @@ class _Builder:
         if len(files) == 0:
             raise BuildFailedError('No files found in output directory')
         for file in files:
-            shutil.move(os.path.join(self.__temp_dir, file), self.__output_dir)
+            shutil.move(os.path.join(self.__temp_dir, file), os.path.join(self.__output_dir, file))
         shutil.rmtree(self.__temp_dir)
 
 class GitBuilder(_Builder):
