@@ -41,9 +41,9 @@ class GitUpdateChecker(UpdateCheckerCommon):
         return temp_var
     
     def __parse_pkgbuild(self, pkgbuild):
-        name = re.findall(r'pkgname=(.*)', pkgbuild)[0].strip()
-        version = re.findall(r'pkgver=(.*)', pkgbuild)[0].strip()
-        pkgrel = re.findall(r'pkgrel=(.*)', pkgbuild)[0].strip()
+        name = re.findall(r'pkgname\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
+        version = re.findall(r'pkgver\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
+        pkgrel = re.findall(r'pkgrel\s?=\s?(\d{1,})', pkgbuild)[0].strip()
         return {name: {'version': f'{version}-{pkgrel}', 'name': name}}
     
     @property

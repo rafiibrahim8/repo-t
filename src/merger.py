@@ -11,6 +11,8 @@ class Merger:
         assert old_db_path.endswith('.db')
         self.__new_db_path = os.path.expanduser(new_db_path)
         self.__old_db_path = os.path.expanduser(old_db_path)
+        self.__old_repo_dir = os.path.dirname(self.__old_db_path)
+        self.__new_repo_dir = os.path.dirname(self.__new_db_path)
         self.__mkdirs()
     
     def __mkdirs(self):
@@ -41,6 +43,13 @@ class Merger:
     def __extact_archive(arc_path, dest_dir):
         subprocess.check_call(['bsdtar', '-xf', arc_path, '-C', dest_dir])
 
+    def __check_file_exists(self, filname):
+        if os.path.exists(os.path.join(self.__old_repo_dir, filname)):
+            return True
+        if os.path.exists(os.path.join(self.__new_repo_dir, filname)):
+            return True
+        return False
+
     def merge(self):
         if not os.path.exists(self.__old_db_path):
             return logger.info('No old database found. Skipping merge')
@@ -57,6 +66,9 @@ class Merger:
             old_db[pkg_name] = pkg
         
         for pkg_name, pkg in old_db.items():
+            if not self.__check_file_exists(pkg['filename']):
+                logger.warning(f'Removing {pkg_name} from database because file {pkg["filename"]} not found')
+                continue
             dir_name = f'{pkg_name}-{pkg["version"]}'
             if os.path.exists(os.path.join(self.__db_dir_new, dir_name)):
                 self.__move_from_new(dir_name)

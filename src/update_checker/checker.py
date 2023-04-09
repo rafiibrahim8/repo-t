@@ -1,4 +1,3 @@
-import logging
 import json
 import os
 
@@ -10,7 +9,8 @@ from utils import logger
 
 class UpdateChecker:
     def __init__(self, db_path):
-        self.__local_repo = RepoUpdateChecker(db_path)
+        self.__repo_files = os.listdir(os.path.dirname(db_path))
+        self.__local_repo = RepoUpdateChecker(os.path.expanduser(db_path))
     
     def check(self):
         logger.info('Checking for updates...')
@@ -28,12 +28,16 @@ class UpdateChecker:
     def __check_aur_packages(self):
         logger.info('Checking AUR packages...')
         packages = self.__read_package_json('aur')
-        aur_checker = AURUpdateChecker(packages)
         
         update_available = []
         for package_name in packages:
+            aur_checker = AURUpdateChecker(package_name)
             if self.__local_repo.get_version(package_name) != aur_checker.get_version(package_name):
-                update_available.append({'name': package_name, 'old-filename': self.__local_repo.get(package_name, 'filename')})
+                update_available.append({'name': package_name})
+                continue
+            # Check if the file name has changed or the file has been removed
+            if self.__local_repo.get(package_name, 'filename') not in self.__repo_files:
+                update_available.append({'name': package_name})
         return update_available
 
     def __check_repo_packages(self):
@@ -42,10 +46,13 @@ class UpdateChecker:
         
         update_available = []
         for package in packages:
-            update_checker = RepoUpdateChecker(f"{package['repo-url']}/{package['repo-name']}.db")
-            if self.__local_repo.get_version(package['name']) != update_checker.get_version(package['name']):
-                package['file-url'] = f"{package['repo-url']}/{update_checker.get(package['name'], 'filename')}"
-                package['old-filename'] = self.__local_repo.get(package['name'], 'filename')
+            repo_checker = RepoUpdateChecker(f"{package['repo-url']}/{package['repo-name']}.db")
+            package['file-url'] = f"{package['repo-url']}/{repo_checker.get(package['name'], 'filename')}"
+            if self.__local_repo.get_version(package['name']) != repo_checker.get_version(package['name']):
+                update_available.append(package)
+                continue
+            # Check if the file name has changed or the file has been removed
+            if self.__local_repo.get(package['name'], 'filename') not in self.__repo_files:
                 update_available.append(package)
         return update_available
     
@@ -57,6 +64,9 @@ class UpdateChecker:
         for package in packages:
             git_checker = GitUpdateChecker(package.get('git_url'), package.get('pkgbuild-url'))
             if self.__local_repo.get_version(package['name']) != git_checker.get_version(package['name']):
-                package['old-filename'] = self.__local_repo.get(package['name'], 'filename')
+                update_available.append(package)
+                continue
+            # Check if the file name has changed or the file has been removed
+            if self.__local_repo.get(package['name'], 'filename') not in self.__repo_files:
                 update_available.append(package)
         return update_available

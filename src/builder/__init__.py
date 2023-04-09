@@ -22,7 +22,7 @@ class Builder:
         self.__gpg_home = gpghome
     
     def build(self):
-        success, failed, to_remove = [], [], []
+        success, failed = [], []
         for pkg_type, packages in self.__updates.items():
             logger.info('Building %s packages', pkg_type)
             for package in packages:
@@ -30,12 +30,10 @@ class Builder:
                     self.__builder_dict[pkg_type](package)
                     logger.info('Successfully built %s', package['name'])
                     success.append(package['name'])
-                    to_remove.append(package['old-filename'])
                 except BuildFailedError as e:
                     logger.error(e)
                     failed.append(package['name'])
-        to_remove = list(filter(lambda x: not not x, to_remove))
-        return success, failed, to_remove
+        return success, failed
     
     def __build_repo(self, package):
         downloader = PkgDownloader(self.__repo_dir, package['file-url'], package.get('keyid'), self.__gpg_home)

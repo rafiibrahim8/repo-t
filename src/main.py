@@ -6,12 +6,11 @@ from update_checker import UpdateChecker
 from builder import Builder
 from signer import Signer
 from dbmaker import DBMaker
+from remover import Remover
 from merger import Merger, copy_dir_files
 
 from utils import logger, get_sys_info, get_temp_dir, keep_alive_mount
 logger.setLevel(logging.DEBUG)
-
-
 
 def _main_impl(args):
     repo_name = os.environ.get('REPO_NAME', 'private-arch-repo').strip()
@@ -38,10 +37,9 @@ def _main_impl(args):
     logger.debug('Updates available: %s', available)
     
     builder = Builder(available, repo_dir_local, mantainer_name, mantainer_email)
-    success, failed, to_remove = builder.build()
+    success, failed = builder.build()
     logger.info('Successfully built: %s', success)
     logger.info('Failed to build: %s', failed)
-    logger.info('Files to remove: %s', to_remove)
     
     Signer(repo_dir_local).sign_all()
     DBMaker(repo_dir_local, repo_name).make_db()
@@ -53,9 +51,7 @@ def _main_impl(args):
 
     copy_dir_files(repo_dir_local, repo_dir)
     
-    for file in to_remove:
-        if os.path.exists(os.path.join(repo_dir, file)):
-            os.remove(os.path.join(repo_dir, file))
+    Remover(os.path.join(repo_dir, f'{repo_name}.db')).remove()
     
 def main():
     parser = ArgumentParser()
