@@ -45,7 +45,7 @@ class PkgDownloader:
         return True
     
     def __move(self):
-        shutil.move(os.path.join(self.__temp_dir, self.__file_name) , self.__dest)
+        shutil.move(os.path.join(self.__temp_dir, self.__file_name) , os.path.join(self.__dest, self.__file_name))
     
     def __cleanup(self):
         shutil.rmtree(self.__temp_dir)

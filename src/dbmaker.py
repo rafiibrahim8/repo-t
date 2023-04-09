@@ -3,7 +3,7 @@ import shutil
 import glob
 import os
 
-from utils import get_temp_dir
+from utils import get_temp_dir, logger
 
 POSSIBLE_KEYS = {
     'FILENAME': 'filename', ## checked
@@ -33,6 +33,7 @@ POSSIBLE_KEYS = {
 
 class DBEntry:
     def __init__(self, pkg_path, skip_md5=False) -> None:
+        logger.debug(f'Parsing {pkg_path}')
         self.__path = os.path.expanduser(pkg_path)
         self.__skip_md5 = skip_md5
         self.__info = self.__read_pkginfo()
@@ -57,8 +58,10 @@ class DBEntry:
         info = {}
         info['csize'] = os.path.getsize(self.__path)
         info['pgpsig'] = subprocess.check_output(['base64', '-w0', self.__path + '.sig']).decode('utf-8')
+        logger.debug('Getting sha256sum...')
         info['sha256sum'] = subprocess.check_output(['sha256sum', self.__path]).decode('utf-8').split(' ', 1)[0]
         if not self.__skip_md5:
+            logger.debug('Getting md5sum...')
             info['md5sum'] = subprocess.check_output(['md5sum', self.__path]).decode('utf-8').split(' ', 1)[0]
         return info
 
@@ -85,7 +88,7 @@ class DBEntry:
 
 
 class DBMaker:
-    def __init__(self, repo_dir:str, repo_name:str, skip:list, **kwargs) -> None:
+    def __init__(self, repo_dir:str, repo_name:str, skip:list=[], **kwargs) -> None:
         self.__repo_dir = os.path.expanduser(repo_dir)
         self.__repo_name = repo_name
         self.__skip_md5 = kwargs.get('skip_md5', False)
@@ -93,6 +96,7 @@ class DBMaker:
         self.__skip = skip
     
     def make_db(self):
+        logger.info('Making repo database...')
         db = []
         for pkg in glob.glob(os.path.join(self.__repo_dir, '*.pkg.tar.zst')):
             if os.path.basename(pkg) in self.__skip:

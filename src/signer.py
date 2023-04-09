@@ -23,6 +23,4 @@ class Signer:
         for file in os.listdir(self.__repo_dir):
             if file.endswith('.sig') or file.endswith('.db'):
                 continue
-            if os.path.exists(os.path.join(self.__repo_dir, f'{file}.sig')):
-                continue
             self.sign(os.path.join(self.__repo_dir, file))

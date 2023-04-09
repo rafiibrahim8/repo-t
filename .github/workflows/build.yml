@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  check-for-outdated-packages:
+  check-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,9 +34,6 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           echo ${{secrets.SSH_KNOWN_HOSTS}} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          cat ~/.ssh/known_hosts
-
-          pip install -r requirements.txt
 
           cat <<EOF >> ~/gpg_privatekey.asc
           ${{secrets.GPG_PRIVATE_KEY}}
@@ -45,16 +42,22 @@ jobs:
           gpg --import ~/gpg_privatekey.asc
           srm ~/gpg_privatekey.asc
 
-          echo -n SSH_REMOTE_DIR-
-          echo ${{vars.SSH_REMOTE_DIR}}
           mkdir -p ~/repo
           sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:${{vars.SSH_REMOTE_DIR}} ~/repo
           ls -la ~/repo
+          
+          pip install -r requirements.txt
 
       - name: Run the builder
         env:
-          REPO_NAME: ${{env.REPO_NAME}}
-          MANTAINER_NAME: ${{env.MANTAINER_NAME}}
-          MANTAINER_EMAIL: ${{env.MANTAINER_EMAIL}}
+          REPO_NAME: ${{vars.REPO_NAME}}
+          MANTAINER_NAME: ${{vars.MANTAINER_NAME}}
+          MANTAINER_EMAIL: ${{vars.MANTAINER_EMAIL}}
         run: |
           python3 src/main.py
+      
+      - name: Cleanup
+        run: |
+          umount ~/repo
+          srm -r ~/.gnupg
+          srm -r ~/.ssh
