@@ -55,6 +55,10 @@ jobs:
           MANTAINER_EMAIL: ${{vars.MANTAINER_EMAIL}}
         run: |
           python3 src/main.py
+        
+      - name: Allowing everyone to read the repo
+        run: |
+          chmod -R a+r ~/repo
       
       - name: Cleanup
         run: |

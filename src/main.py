@@ -17,8 +17,8 @@ def _main_impl(args):
     repo_name = os.environ.get('REPO_NAME', 'private-arch-repo').strip()
     repo_dir_local = get_temp_dir()
     repo_dir = os.path.expanduser('~/repo')
-    # if not os.path.exists(repo_dir):
-    #     raise FileNotFoundError(f'Repo directory {repo_dir} does not exist')
+    if not os.path.exists(repo_dir):
+        raise FileNotFoundError(f'Repo directory {repo_dir} does not exist')
     mantainer_name = os.environ['MANTAINER_NAME'].strip()
     mantainer_email = os.environ['MANTAINER_EMAIL'].strip()
 
@@ -28,8 +28,6 @@ def _main_impl(args):
 
     assert repo_name and mantainer_name and mantainer_email, 'Some of the required environment variables are not set'
     
-    repo_dir = 'arepo'
-    repo_name = 'arepo'
     checker = UpdateChecker(os.path.join(repo_dir, f'{repo_name}.db'))
 
     available =  checker.check()
