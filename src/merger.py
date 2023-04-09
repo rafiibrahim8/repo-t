@@ -103,4 +103,5 @@ class Merger:
 
 def copy_dir_files(src, dest):
     for file in os.listdir(src):
+        logger.debug(f'Copying {file}')
         shutil.copy(os.path.join(src, file), os.path.join(dest, file))
