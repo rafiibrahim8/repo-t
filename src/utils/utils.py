@@ -6,7 +6,7 @@ import json
 import sys
 import os
 
-__all__ = ['get_temp_dir', 'notify', 'logger']
+__all__ = ['get_temp_dir', 'notify', 'logger', 'get_sys_info']
 
 def get_temp_dir():
     random = base64.urlsafe_b64encode(os.urandom(9)).decode('utf-8')

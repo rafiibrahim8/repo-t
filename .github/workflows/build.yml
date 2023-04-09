@@ -45,8 +45,9 @@ jobs:
           gpg --import ~/gpg_privatekey.asc
           srm ~/gpg_privatekey.asc
 
+          echo ${{env.SSH_REMOTE_PATH}}
           mkdir -p ~/repo
-          sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:/${{env.SSH_REMOTE_PATH}} ~/repo
+          sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:${{env.SSH_REMOTE_PATH}} ~/repo
           ls -la ~/repo
 
       - name: Run the builder
