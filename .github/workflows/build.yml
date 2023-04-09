@@ -22,8 +22,8 @@ jobs:
       - name: Install ubuntu dependencies
         run: |
           sudo apt update
-          sudo apt install -y sshfs secure-delete neofetch
-      
+          sudo apt install -y sshfs secure-delete neofetch libarchive-tools
+
       - name: Prepare the machine
         run: |
           neofetch
@@ -34,6 +34,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           echo ${{env.SSH_KNOWN_HOSTS}} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+          cat ~/.ssh/know_hosts
 
           pip install -r requirements.txt
 
