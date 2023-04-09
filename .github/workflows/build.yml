@@ -34,7 +34,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           echo ${{env.SSH_KNOWN_HOSTS}} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          cat ~/.ssh/know_hosts
+          cat ~/.ssh/known_hosts
 
           pip install -r requirements.txt
 
