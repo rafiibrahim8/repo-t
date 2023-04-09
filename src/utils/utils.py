@@ -33,7 +33,7 @@ def get_sys_info():
 def keep_alive_mount(location):
     def keep_alive_mount_thread():
         while True:
-            subprocess.check_call(['ls','-la', location])
+            subprocess.check_output(['ls','-la', location])
             time.sleep(1)
     thread = threading.Thread(target=keep_alive_mount_thread)
     thread.daemon = True
