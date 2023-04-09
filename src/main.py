@@ -8,7 +8,7 @@ from signer import Signer
 from dbmaker import DBMaker
 from merger import Merger, copy_dir_files
 
-from utils import logger, get_sys_info, get_temp_dir
+from utils import logger, get_sys_info, get_temp_dir, keep_alive_mount
 logger.setLevel(logging.DEBUG)
 
 
@@ -19,6 +19,7 @@ def _main_impl(args):
     repo_dir = os.path.expanduser('~/repo')
     if not os.path.exists(repo_dir):
         raise FileNotFoundError(f'Repo directory {repo_dir} does not exist')
+    keep_alive_mount(repo_dir)
     mantainer_name = os.environ['MANTAINER_NAME'].strip()
     mantainer_email = os.environ['MANTAINER_EMAIL'].strip()
 

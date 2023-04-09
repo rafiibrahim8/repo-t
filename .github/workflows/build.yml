@@ -41,13 +41,13 @@ jobs:
           chmod 600 ~/gpg_privatekey.asc
           gpg --import ~/gpg_privatekey.asc
           srm ~/gpg_privatekey.asc
+          
+          pip install -r requirements.txt
 
           mkdir -p ~/repo
           sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:${{vars.SSH_REMOTE_DIR}} ~/repo
           ls -la ~/repo
           
-          pip install -r requirements.txt
-
       - name: Run the builder
         env:
           REPO_NAME: ${{vars.REPO_NAME}}
