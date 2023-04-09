@@ -32,14 +32,17 @@ def _main_impl(args):
 
     available =  checker.check()
     if not (available['aur'] or available['repo'] or available['git']):
-        logger.info('No updates available. Bye bye!')
-        return
+        return logger.info('No updates available. Bye bye!')
+    
     logger.debug('Updates available: %s', available)
     
     builder = Builder(available, repo_dir_local, mantainer_name, mantainer_email)
     success, failed = builder.build()
     logger.info('Successfully built: %s', success)
     logger.info('Failed to build: %s', failed)
+
+    if not success:
+        return logger.error('No packages were built. Exiting...')
     
     Signer(repo_dir_local).sign_all()
     DBMaker(repo_dir_local, repo_name).make_db()

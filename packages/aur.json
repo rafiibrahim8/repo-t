@@ -2,6 +2,5 @@
     "arduino-ide-bin",
     "binaryninja-demo",
     "rtl8188gu-dkms-git",
-    "steghide",
-    "robo3t-bin"
+    "steghide"
 ]
