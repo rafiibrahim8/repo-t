@@ -1,8 +1,8 @@
-name: Check for outdated packages
+name: Check and build packages
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 */12 * * *'
   push:
     branches:
       - main
@@ -55,10 +55,6 @@ jobs:
           MANTAINER_EMAIL: ${{vars.MANTAINER_EMAIL}}
         run: |
           python3 src/main.py
-        
-      - name: Allowing everyone to read the repo
-        run: |
-          chmod -R a+r ~/repo
       
       - name: Cleanup
         run: |

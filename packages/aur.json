@@ -1,3 +1,9 @@
 [
-    "jetbrains-toolbox"
+    "arduino-ide-bin",
+    "balena-etcher",
+    "binaryninja-demo",
+    "ibus-avro-git",
+    "robo3t-bin",
+    "rtl8188gu-dkms-git",
+    "steghide"
 ]

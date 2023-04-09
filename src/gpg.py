@@ -10,6 +10,9 @@ class GPGSigner:
     def sign(self, file_path, sig_path=None):
         subprocess.check_call(['gpg', '--sign', '--detach-sign', file_path])
         return
+        ## Following code is not working
+        ## Works only in local machine
+        ## Don't know why :(
         file_path = os.path.expanduser(file_path)
         r = self.__gpg.sign_file(file_path, keyid=self.__keyid, detach=True, binary=True)
         assert r.fingerprint.endswith(self.__keyid), f'Can not sign wth key: {self.__keyid}'
