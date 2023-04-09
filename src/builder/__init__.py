@@ -1,3 +1,5 @@
+import os
+
 from .docker_builders import AURBuilder, GitBuilder
 from .pkg_downloader import PkgDownloader
 
@@ -5,10 +7,9 @@ from utils import logger
 from errors import BuildFailedError
 
 class Builder:
-    def __init__(self, updates, gpghome, repo_dir, packager_name, packager_email):
+    def __init__(self, updates, repo_dir, packager_name, packager_email, gpghome=None):
         self.__packager_name = packager_name
         self.__packager_email = packager_email
-        self.__gpg_home = gpghome
         self.__repo_dir = repo_dir
         self.__updates = updates
         self.__builder_dict = {
@@ -16,6 +17,9 @@ class Builder:
             'aur': self.__build_aur,
             'git': self.__build_git
         }
+        if gpghome is None:
+            gpghome = os.path.expanduser('~/.gnupg')
+        self.__gpg_home = gpghome
     
     def build(self):
         success, failed, to_remove = [], [], []

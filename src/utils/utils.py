@@ -1,6 +1,9 @@
+import subprocess
 import requests
 import logging
 import base64
+import json
+import sys
 import os
 
 __all__ = ['get_temp_dir', 'notify', 'logger']
@@ -14,6 +17,16 @@ def get_temp_dir():
 def notify(message):
     if os.environ.get('DISCORD_WEBHOOK_URL'):
         requests.post(os.environ['DISCORD_WEBHOOK_URL'], json={'content': message})
+
+def get_sys_info():
+    info = {
+        'os': os.uname(),
+        'bsdtar': subprocess.check_output(['bsdtar', '--version']).decode('utf-8').split('\n')[0],
+        'docker': subprocess.check_output(['docker', '--version']).decode('utf-8').split('\n')[0],
+        'curl': subprocess.check_output(['curl', '--version']).decode('utf-8').split('\n')[0],
+        'python': f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}',
+    }
+    return json.dumps(info, indent=4)
 
 logger = logging.getLogger('private-arch-repo')
 logger.setLevel(logging.INFO)

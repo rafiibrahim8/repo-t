@@ -4,7 +4,9 @@ from gpg import GPG
 from utils import logger
 
 class Signer:
-    def __init__(self, repo_dir, gpghome, signkeyid=None):
+    def __init__(self, repo_dir, signkeyid=None, gpghome=None):
+        if gpghome is None:
+            gpghome = os.path.expanduser('~/.gnupg')
         if signkeyid is None:
             signkeyid = GPG(gpghome).get_default_keyid()
         logger.info(f'Using key {signkeyid} to sign packages')

@@ -1,8 +1,8 @@
 [
     {
-        "repo-name": "chaotic-aur",
-        "repo-url": "http://mirror.local/archmirror/chaotic-aur/",
-        "name": "google-chrome",
-        "keyid": "45ECA705E3897524654A37880706B90D37D9B881"
+        "repo-name": "pritunl",
+        "repo-url": "https://repo.pritunl.com/stable/pacman",
+        "name": "pritunl-client-electron",
+        "keyid": "7568D9BB55FF9E5287D586017AE645C0CF8E292A"
     }
 ]

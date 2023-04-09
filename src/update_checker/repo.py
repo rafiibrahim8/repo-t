@@ -53,6 +53,8 @@ class RepoUpdateChecker(UpdateCheckerCommon):
         if self.__repo_db_url.startswith('https://') or self.__repo_db_url.startswith('http://'):
             subprocess.check_call(['curl', '-Lso', os.path.join(self.__temp_dir, 'repo.db'), self.__repo_db_url])
         else:
+            if not os.path.exists(self.__repo_db_url):
+                return
             shutil.copy(self.__repo_db_url, os.path.join(self.__temp_dir, 'repo.db'))
         
         subprocess.check_call(['bsdtar', '-xf', os.path.join(self.__temp_dir, 'repo.db'), '-C', self.__temp_dir])

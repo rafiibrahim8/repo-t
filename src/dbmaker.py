@@ -85,15 +85,18 @@ class DBEntry:
 
 
 class DBMaker:
-    def __init__(self, repo_dir:str, repo_name:str, **kwargs) -> None:
+    def __init__(self, repo_dir:str, repo_name:str, skip:list, **kwargs) -> None:
         self.__repo_dir = os.path.expanduser(repo_dir)
         self.__repo_name = repo_name
         self.__skip_md5 = kwargs.get('skip_md5', False)
         self.__temp_dir = get_temp_dir()
+        self.__skip = skip
     
     def make_db(self):
         db = []
         for pkg in glob.glob(os.path.join(self.__repo_dir, '*.pkg.tar.zst')):
+            if os.path.basename(pkg) in self.__skip:
+                continue
             db.append(DBEntry(pkg, self.__skip_md5))
         pkg_db = os.path.join(self.__temp_dir, 'pkgdb')
         
