@@ -23,6 +23,6 @@ class Remover:
 
         for filename in os.listdir(self.__repo_dir):
             if filename not in filenames:
-                if filename.endswith('.db') or filename.endswith('.sig'):
+                if filename.endswith('.db') or filename.endswith('.sig') or filename.endswith('.files'):
                     continue
                 self.__remove(os.path.join(self.__repo_dir, filename))

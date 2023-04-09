@@ -44,6 +44,10 @@ class GitUpdateChecker(UpdateCheckerCommon):
         name = re.findall(r'pkgname\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
         version = re.findall(r'pkgver\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
         pkgrel = re.findall(r'pkgrel\s?=\s?(\d{1,})', pkgbuild)[0].strip()
+        epoch = re.findall(r'epoch\s?=\s?(\d{1,})', pkgbuild)
+        if epoch:
+            epoch = epoch[0].strip()
+            return {name: {'version': f'{epoch}:{version}-{pkgrel}', 'name': name}}
         return {name: {'version': f'{version}-{pkgrel}', 'name': name}}
     
     @property
