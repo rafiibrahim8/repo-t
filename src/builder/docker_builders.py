@@ -1,3 +1,4 @@
+import requests
 import docker
 import base64
 import shutil
@@ -17,16 +18,38 @@ echo PKGDEST=/output >> /etc/makepkg.conf
 chown -R builder:builder /output
 '''
 
+CHAOTIC_KEYID = 'FBA220DFC880C036'
+CHAOTIC_KEY_LIST_URL = 'https://github.com/chaotic-aur/keyring/raw/master/master-keyids'
+
+CHAOTIC_COMMAND = f'''
+pacman-key --recv-key {CHAOTIC_KEYID} --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key {CHAOTIC_KEYID}
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+echo -e '[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' | tee -a /etc/pacman.conf
+'''
+
 class _Builder:
     def __init__(self, packer_name, packger_email, output_dir):
         self.__output_dir = os.path.expanduser(output_dir)
         self.__client = docker.from_env()
-        self.__init_command = INIT_COMMAND.replace('###NAME###', packer_name).replace('###EMAIL###', packger_email)
         self.__temp_dir = get_temp_dir()
         os.makedirs(self.__output_dir, exist_ok=True)
+        self.__init_command = self.__get_chaotic_command() + '\n' + INIT_COMMAND.replace('###NAME###', packer_name).replace('###EMAIL###', packger_email)
 
     def build(self):
         raise NotImplementedError('Should be implemented by subclass')
+    
+    def __get_chaotic_command(self):
+        try:
+            res = requests.get(CHAOTIC_KEY_LIST_URL)
+            assert res.status_code < 400
+            assert CHAOTIC_KEYID in res.text
+        except requests.RequestException:
+            return ''
+        except AssertionError:
+            logger.warning('ChaoticAUR key changed!')
+            return ''
+        return CHAOTIC_COMMAND
 
     def __process_command(self, command):
         command = [i.strip() for i in command.split('\n') if i.strip() and not i.strip().startswith('#')]
