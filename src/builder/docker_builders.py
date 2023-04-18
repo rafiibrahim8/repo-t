@@ -23,6 +23,7 @@ CHAOTIC_KEY_LIST_URL = 'https://github.com/chaotic-aur/keyring/raw/master/master
 
 CHAOTIC_COMMAND = f'''
 pacman -Syy
+pacman-key --init
 pacman-key --recv-key {CHAOTIC_KEYID} --keyserver keyserver.ubuntu.com
 pacman-key --lsign-key {CHAOTIC_KEYID}
 pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
