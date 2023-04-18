@@ -3,5 +3,6 @@
     "binaryninja-demo",
     "rtl8188gu-dkms-git",
     "steghide",
-    "balena-etcher-appimage"
+    "balena-etcher-appimage",
+    "robo3t-bin"
 ]
