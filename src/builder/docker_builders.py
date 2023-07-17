@@ -18,7 +18,7 @@ echo PKGDEST=/output >> /etc/makepkg.conf
 chown -R builder:builder /output
 '''
 
-CHAOTIC_KEYID = 'FBA220DFC880C036'
+CHAOTIC_KEYID = '3056513887B78AEB'
 CHAOTIC_KEY_LIST_URL = 'https://github.com/chaotic-aur/keyring/raw/master/master-keyids'
 
 CHAOTIC_COMMAND = f'''
