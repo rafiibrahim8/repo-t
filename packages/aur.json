@@ -4,6 +4,7 @@
     "rtl8188gu-dkms-git",
     "steghide",
     "balena-etcher-appimage",
+    "postman-bin",
     "robo3t-bin",
     "golangci-lint"
 ]
