@@ -6,5 +6,7 @@
     "balena-etcher-appimage",
     "postman-bin",
     "robo3t-bin",
-    "golangci-lint"
+    "golangci-lint",
+    "mksh",
+    "kwalletcli"
 ]
