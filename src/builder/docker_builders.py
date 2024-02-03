@@ -66,7 +66,7 @@ class _Builder:
     def _run(self, command):
         command = self.__process_command(command)
         logger.debug(f'Running command: {command}')
-        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
+        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
             logger.info(line.decode('utf-8').strip())
