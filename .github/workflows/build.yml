@@ -54,6 +54,7 @@ jobs:
           pip install -r requirements.txt
           
       - name: Run the builder
+        shell: 'script -q -e -c "bash {0}"'
         env:
           REPO_NAME: ${{vars.REPO_NAME}}
           MANTAINER_NAME: ${{vars.MANTAINER_NAME}}
