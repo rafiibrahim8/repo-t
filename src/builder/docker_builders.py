@@ -72,7 +72,7 @@ class _Builder:
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
             line = line.decode('utf-8')
-            logger.info('line ends with newline: ' + line.endswith('\n'))
+            logger.info('line ends with newline: ', line.endswith('\n'))
             logger.info(line.strip())
         files = os.listdir(self.__temp_dir)
         if len(files) == 0:
