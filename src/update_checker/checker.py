@@ -33,6 +33,9 @@ class UpdateChecker:
         for package_name in packages:
             aur_checker = AURUpdateChecker(package_name)
             if self.__local_repo.get_version(package_name) != aur_checker.get_version(package_name):
+                logger.debug(f'Update available for {package_name}')
+                logger.debug(f'Local version: {self.__local_repo.get_version(package_name)}')
+                logger.debug(f'Remote version: {aur_checker.get_version(package_name)}')
                 update_available.append({'name': package_name})
                 continue
             # Check if the file name has changed or the file has been removed
