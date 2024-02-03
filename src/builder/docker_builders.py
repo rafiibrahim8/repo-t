@@ -70,7 +70,7 @@ class _Builder:
         logger.debug(f'Running command: {command}')
         streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
-        for line in streamer.logs(stream=False):
+        for line in streamer.logs(stream=True):
             line = line.decode('utf-8')
             logger.info('line ends with newline: ' + line.endswith('\n'))
             logger.info(line.strip())
