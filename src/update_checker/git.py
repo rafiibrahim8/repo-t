@@ -42,7 +42,7 @@ class GitUpdateChecker(UpdateCheckerCommon):
     
     def __parse_pkgbuild(self, pkgbuild):
         name = re.findall(r'pkgname\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
-        version = re.findall(r'^pkgver\s?=\s?([^\n\s#]+)', pkgbuild)[0].strip()
+        version = re.findall(r'pkgver\s?=\s?([^\n\s#]+)', pkgbuild)[-1].strip()
         pkgrel = re.findall(r'pkgrel\s?=\s?(\d{1,})', pkgbuild)[0].strip()
         epoch = re.findall(r'epoch\s?=\s?(\d{1,})', pkgbuild)
         if epoch:
