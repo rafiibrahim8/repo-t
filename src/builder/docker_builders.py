@@ -10,6 +10,7 @@ from errors import BuildFailedError
 INIT_COMMAND = '''
 pacman -Syu --noconfirm
 pacman -S --noconfirm --needed git sudo base-devel
+perl -E 'say "Is STDOUT a TTY?: ", -t STDOUT ? "yes" : "no"'
 useradd -m -c 'Package Builder' -s /bin/bash builder  
 echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/builder
 curl https://gist.githubusercontent.com/rafiibrahim8/e2734d312c086db757d12fd1c8367e11/raw/5236970d62b8c8f4ff0ce25c543dcf7e14689317/makepkg.conf -o /etc/makepkg.conf
@@ -22,7 +23,6 @@ CHAOTIC_KEYID = '3056513887B78AEB'
 CHAOTIC_KEY_LIST_URL = 'https://github.com/chaotic-aur/keyring/raw/master/master-keyids'
 
 CHAOTIC_COMMAND = f'''
-perl -E 'say "Is STDOUT a TTY?: ", -t STDOUT ? "yes" : "no"'
 pacman -Syy
 pacman-key --init
 pacman-key --recv-key {CHAOTIC_KEYID} --keyserver keyserver.ubuntu.com
@@ -65,12 +65,15 @@ class _Builder:
         return f'bash -c "{processed}"\n'
 
     def _run(self, command):
+        container_stdout = []
         command = self.__process_command(command)
         logger.debug(f'Running command: {command}')
         streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
-        for line in streamer.logs(stream=True):
-            logger.info(line.decode('utf-8').strip())
+        for line in streamer.logs(stream=False):
+            line = line.decode('utf-8')
+            logger.info('line ends with newline: ' + line.endswith('\n'))
+            logger.info(line.strip())
         files = os.listdir(self.__temp_dir)
         if len(files) == 0:
             raise BuildFailedError('No files found in output directory')
