@@ -72,8 +72,11 @@ class _Builder:
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
             line = line.decode('utf-8')
-            logger.info('line ends with newline: ', line.endswith('\n'))
-            logger.info(line.strip())
+            if line.endswith('\n'):
+                logger.info(''.join(container_stdout).strip())
+                container_stdout = []
+                continue
+            container_stdout.append(line)
         files = os.listdir(self.__temp_dir)
         if len(files) == 0:
             raise BuildFailedError('No files found in output directory')
