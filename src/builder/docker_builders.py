@@ -22,6 +22,7 @@ CHAOTIC_KEYID = '3056513887B78AEB'
 CHAOTIC_KEY_LIST_URL = 'https://github.com/chaotic-aur/keyring/raw/master/master-keyids'
 
 CHAOTIC_COMMAND = f'''
+perl -E 'say "Is STDOUT a TTY?: ", -t STDOUT ? "yes" : "no"'
 pacman -Syy
 pacman-key --init
 pacman-key --recv-key {CHAOTIC_KEYID} --keyserver keyserver.ubuntu.com
