@@ -31,13 +31,21 @@ pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring
 echo -e '[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist' | tee -a /etc/pacman.conf
 '''
 
+CUSOM_REPO_COMMAND = '''
+pacman-key --recv-key {keyid} --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key {keyid}
+echo -e '[{name}]\nServer = {url}' | tee -a /etc/pacman.conf > /dev/null
+'''
+
 class _Builder:
     def __init__(self, packer_name, packger_email, output_dir):
         self.__output_dir = os.path.expanduser(output_dir)
         self.__client = docker.from_env()
         self.__temp_dir = get_temp_dir()
         os.makedirs(self.__output_dir, exist_ok=True)
-        self.__init_command = self.__get_chaotic_command() + '\n' + INIT_COMMAND.replace('###NAME###', packer_name).replace('###EMAIL###', packger_email)
+        self.__init_command = self.__get_chaotic_command() + '\n' + \
+            self.__get_custom_repo_command() + '\n' + \
+            INIT_COMMAND.replace('###NAME###', packer_name).replace('###EMAIL###', packger_email)
 
     def build(self):
         raise NotImplementedError('Should be implemented by subclass')
@@ -54,6 +62,19 @@ class _Builder:
             return ''
         return CHAOTIC_COMMAND
 
+    def __get_custom_repo_command(self):
+        required_envs = ['CUSTOM_REPO_KEYID', 'CUSTOM_REPO_NAME', 'CUSTOM_REPO_URL']
+        for env in required_envs:
+            if env not in os.environ:
+                logger.debug(f'Not all required envs found for custom repo. Ignoring custom repo')
+                return ''
+        logger.debug(f'Using custom repo: {os.environ["CUSTOM_REPO_NAME"]}')
+        return CUSOM_REPO_COMMAND.format(
+            keyid=os.environ['CUSTOM_REPO_KEYID'],
+            name=os.environ['CUSTOM_REPO_NAME'],
+            url=os.environ['CUSTOM_REPO_URL']
+        )
+
     def __process_command(self, command):
         command = [i.strip() for i in command.split('\n') if i.strip() and not i.strip().startswith('#')]
         command.append(f'sudo chown -R {os.getuid()}:{os.getgid()} /output')
@@ -67,7 +88,8 @@ class _Builder:
     def _run(self, command):
         container_stdout = []
         command = self.__process_command(command)
-        logger.debug(f'Running command: {command}')
+        logger.debug(f'Running build command...')
+        # DO NOT echo command here. It may expose the base64 encoded secrets
         streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):

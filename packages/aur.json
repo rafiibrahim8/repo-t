@@ -7,6 +7,5 @@
     "postman-bin",
     "robo3t-bin",
     "golangci-lint",
-    "mksh",
     "kwalletcli"
 ]
