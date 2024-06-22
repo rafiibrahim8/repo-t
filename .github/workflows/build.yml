@@ -12,36 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
     
       - name: Install Python and pip
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
         
       - name: Install ubuntu dependencies
         run: |
           sudo apt update
-          sudo apt install -y sshfs secure-delete neofetch libarchive-tools
+          sudo apt install -y secure-delete neofetch libarchive-tools s3fs
 
       - name: Prepare the machine
         run: |
+          set -e
           neofetch
           
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          
-          cat <<EOF >> ~/.ssh/id_ed25519
-          ${{secrets.SSH_PRIVATE_KEY}}
-          EOF
-          
-          chmod 600 ~/.ssh/id_ed25519
-
-          echo "Creating known_hosts...."
-          echo "${{secrets.SSH_KNOWN_HOSTS}}" >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
+          echo "${{secrets.S3_ACCESS_KEY_ID}}:${{secrets.S3_SECRET_ACCESS_KEY}}" > ~/.passwd-s3fs
+          chmod 600 ~/.passwd-s3fs
           mkdir -p ~/repo
-          sshfs -p ${{secrets.SSH_REMOTE_PORT}} ${{secrets.SSH_REMOTE_USER}}@${{secrets.SSH_REMOTE_HOST}}:${{vars.SSH_REMOTE_DIR}} ~/repo
+          s3fs -o passwd_file=~/.passwd-s3fs,url=${{secrets.S3_BUCKET_URL}} ${{vars.S3_BUCKET_NAME}} ~/repo
+
           ls -la ~/repo
 
           cat <<EOF >> ~/gpg_privatekey.asc
