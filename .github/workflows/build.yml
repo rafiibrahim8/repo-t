@@ -60,3 +60,5 @@ jobs:
         run: |
           umount ~/s3root
           srm -r ~/.gnupg
+          srm -r ~/.passwd-s3fs
+
