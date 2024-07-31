@@ -36,7 +36,7 @@ jobs:
           EOF
 
           mkdir ~/repo
-          rclone mount --daemon ${{vars.RCLONE_MOUNT_PATH}} ~/repo
+          rclone mount --vfs-cache-mode writes --daemon ${{vars.RCLONE_MOUNT_PATH}} ~/repo
           
           for i in {1..10}; do
             n_of_files=$(ls -1 ~/repo | wc -l)
@@ -79,3 +79,4 @@ jobs:
         run: |
           umount ~/repo
           srm -r ~/.gnupg
+          srm -r ~/.config/rclone
