@@ -37,6 +37,22 @@ jobs:
 
           mkdir ~/repo
           rclone mount --daemon ${{vars.RCLONE_MOUNT_PATH}} ~/repo
+          
+          for i in {1..10}; do
+            n_of_files=$(ls -1 ~/repo | wc -l)
+            if [ $n_of_files -gt 0 ]; then
+              echo "$n_of_files files found in the directory."
+              break
+            fi
+            if [ $i -eq 10 ]; then
+              echo "Unable to find any files in the directory."
+              echo "If it a new repository, create a new file on the path."
+              exit 1
+            fi
+            echo "Waiting for files to be created in the directory...$i"
+            sleep 1
+          done
+
           ls -lahH ~/repo
 
           cat <<EOF >> ~/gpg_privatekey.asc
