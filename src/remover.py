@@ -4,8 +4,8 @@ from update_checker.repo import RepoUpdateChecker
 from utils import logger
 
 class Remover:
-    def __init__(self, db_path):
-        self.__repo_dir = os.path.dirname(db_path)
+    def __init__(self, repo_dir, db_path):
+        self.__repo_dir = repo_dir
         self.__repo = RepoUpdateChecker(db_path)
     
     def __remove(self, path):

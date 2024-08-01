@@ -81,6 +81,7 @@ jobs:
           CUSTOM_REPO_NAME: ${{vars.CUSTOM_REPO_NAME}}
           CUSTOM_REPO_KEYID: ${{vars.CUSTOM_REPO_KEYID}}
           CUSTOM_REPO_URL: ${{secrets.CUSTOM_REPO_URL}}
+          COPY_COMMAND: ./copy.sh
         run: |
           python3 src/main.py
       

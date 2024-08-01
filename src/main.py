@@ -54,7 +54,7 @@ def _main_impl(args):
 
     copy_dir_files(repo_dir_local, repo_dir, os.environ.get('COPY_COMMAND'))
     
-    Remover(os.path.join(repo_dir, f'{repo_name}.db')).remove()
+    Remover(repo_dir, os.path.join(repo_dir_local, f'{repo_name}.db')).remove()
     
 def main():
     parser = ArgumentParser()
