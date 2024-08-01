@@ -68,12 +68,11 @@ jobs:
           #!/bin/bash
           set -e
           file_size=\$(stat -c %s "\$1" | numfmt --to=iec-i --suffix=B --format='%.2f')
-          echo "Copying $1 ... $file_size"
-          rclone copy "$1" "${{vars.RCLONE_MOUNT_PATH}}/"
+          echo "Copying \$1 ... $file_size"
+          rclone copy "\$1" "${{vars.RCLONE_MOUNT_PATH}}/"
           EOF
           chmod +x ./copy.sh
           cat ./copy.sh
-          exit 1
       - name: Run the builder
         env:
           REPO_NAME: ${{vars.REPO_NAME}}
