@@ -64,6 +64,14 @@ jobs:
           
           pip install -r requirements.txt
           
+          cat <<EOF >> ./copy.sh
+          #!/bin/bash
+          set -e
+          file_size=$(stat -c %s "$1" | numfmt --to=iec-i --suffix=B --format='%.2f')
+          echo "Copying $1 ... $file_size"
+          rclone cp "$1" "${{vars.RCLONE_MOUNT_PATH}}/"
+          EOF
+          chmod +x ./copy.sh
       - name: Run the builder
         env:
           REPO_NAME: ${{vars.REPO_NAME}}
@@ -72,6 +80,7 @@ jobs:
           CUSTOM_REPO_NAME: ${{vars.CUSTOM_REPO_NAME}}
           CUSTOM_REPO_KEYID: ${{vars.CUSTOM_REPO_KEYID}}
           CUSTOM_REPO_URL: ${{secrets.CUSTOM_REPO_URL}}
+          COPY_COMMAND: ./copy.sh
         run: |
           python3 src/main.py
       

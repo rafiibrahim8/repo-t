@@ -89,7 +89,10 @@ class Merger:
         shutil.move(new_db_file_path, self.__new_db_path)
         shutil.move(new_files_file_path, self.__new_db_path[: -3] + '.files')
 
-def copy_dir_files(src, dest):
+def copy_dir_files(src, dest, copy_command=None):
     for file in os.listdir(src):
         logger.debug(f'Copying {file}')
-        shutil.copy(os.path.join(src, file), os.path.join(dest, file))
+        if not copy_command:
+            shutil.copy(os.path.join(src, file), os.path.join(dest, file))
+        else:
+            subprocess.check_call([copy_command, os.path.join(src, file), os.path.join(dest, file)])

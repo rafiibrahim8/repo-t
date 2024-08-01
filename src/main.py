@@ -52,7 +52,7 @@ def _main_impl(args):
 
     Merger(local_db, remote_db).merge()
 
-    copy_dir_files(repo_dir_local, repo_dir)
+    copy_dir_files(repo_dir_local, repo_dir, os.environ.get('COPY_COMMAND'))
     
     Remover(os.path.join(repo_dir, f'{repo_name}.db')).remove()
     
