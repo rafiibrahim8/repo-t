@@ -86,11 +86,10 @@ class _Builder:
         return f'bash -c "{processed}"\n'
 
     def _run(self, command):
-        container_stdout = []
         command = self.__process_command(command)
         logger.debug(f'Running build command...')
         # DO NOT echo command here. It may expose the base64 encoded secrets
-        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=False, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
+        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=False, stdout=True, stderr=True, stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
             print(f'line-- "{line}"')
@@ -98,11 +97,7 @@ class _Builder:
                 line = line.decode('utf-8')
             except UnicodeDecodeError:
                 line = line.decode('latin-1')
-            if line.endswith('\n'):
-                logger.info(''.join(container_stdout).strip())
-                container_stdout = []
-                continue
-            container_stdout.append(line)
+            logger.info(line.strip())
         files = os.listdir(self.__temp_dir)
         if len(files) == 0:
             raise BuildFailedError('No files found in output directory')
