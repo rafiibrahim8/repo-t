@@ -93,6 +93,7 @@ class _Builder:
         streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=False, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
+            print(f'line-- "{line}"')
             try:
                 line = line.decode('utf-8')
             except UnicodeDecodeError:
