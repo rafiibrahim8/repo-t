@@ -90,7 +90,7 @@ class _Builder:
         command = self.__process_command(command)
         logger.debug(f'Running build command...')
         # DO NOT echo command here. It may expose the base64 encoded secrets
-        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=True, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
+        streamer = self.__client.containers.run('archlinux:latest', command, remove=True, tty=False, stdout=True,stream=True,detach=True, volumes=[f'{self.__temp_dir}:/output'])
         logger.debug('Command output:')
         for line in streamer.logs(stream=True):
             try:
