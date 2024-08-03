@@ -40,7 +40,6 @@ def _main_impl(args):
     success, failed = builder.build()
     logger.info('Successfully built: %s', success)
     logger.info('Failed to build: %s', failed)
-    exit(1)
     if not success:
         return logger.error('No packages were built. Exiting...')
     
