@@ -2,7 +2,7 @@ name: Check and build packages
 
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 2 * * *'
   push:
     branches:
       - main
